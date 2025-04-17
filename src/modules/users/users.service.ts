@@ -42,7 +42,7 @@ export class UsersService {
   transformQueryToWhere(searchDto: SearchUsersDto) {
     return {
       OR: [
-        { id: searchDto.id },
+        { id: searchDto.id! },
         { email: searchDto.email! },
         { username: searchDto.username! },
         { role: searchDto.role! },
@@ -66,5 +66,23 @@ export class UsersService {
       throw new AppException('E003');
     }
     return updatedUser;
+  }
+
+  async delete(id: number): Promise<Users> {
+    const existsUser = await this.repository.getUsers({ where: { id } });
+    if (!existsUser || existsUser.length === 0) {
+      throw new AppException('E001');
+    }
+
+    const deletedUser = await this.repository.deleteUser({
+      where: {
+        id,
+      },
+      select: UsersSelect,
+    });
+    if (!deletedUser) {
+      throw new AppException('E003');
+    }
+    return deletedUser;
   }
 }
