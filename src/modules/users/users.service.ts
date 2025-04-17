@@ -1,18 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
-import {
-  AppException,
-  ExceptionRegistryService,
-} from '@webxsid/nest-exception';
+import { AppException } from '@webxsid/nest-exception';
+import { Password } from '@app/password-lib';
 
 @Injectable()
 export class UsersService {
   constructor(private repository: UsersRepository) {}
 
   async createUser(dto: CreateUserDto) {
+    const existsUser = await this.repository.getUsers({
+      where: { email: dto.email },
+    });
+    if (existsUser && existsUser.length > 0) {
+      throw new AppException('E002');
+    }
+
+    const hashPassword = await Password.hashPassword(dto.password);
+
     const user = await this.repository.createUser({
-      data: dto,
+      data: {
+        hashPassword: hashPassword,
+        email: dto.email,
+        username: dto.username,
+        avatar: dto.avatar,
+      },
     });
 
     return user;

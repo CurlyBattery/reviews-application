@@ -9,7 +9,10 @@ import { AppExceptionModule } from '@webxsid/nest-exception';
   imports: [
     PrismaModule,
     AppExceptionModule.forRoot({
-      errors: [{ code: 'E001', statusCode: 404, message: 'User not found' }],
+      errors: [
+        { code: 'E001', statusCode: 404, message: 'User not found' },
+        { code: 'E002', statusCode: 409, message: 'User already exists' },
+      ],
     }),
   ],
   controllers: [UsersController],
