@@ -6,10 +6,12 @@ import {
   ParseIntPipe,
   Post,
   Body,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SearchUsersDto } from './dto/search-users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -21,8 +23,8 @@ export class UsersController {
   }
 
   @Get()
-  getUsers() {
-    return this.usersService.getUsers();
+  getUsers(@Query() searchDto: SearchUsersDto) {
+    return this.usersService.search(searchDto);
   }
 
   @Patch(':id')

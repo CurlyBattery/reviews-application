@@ -4,6 +4,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AppException } from '@webxsid/nest-exception';
 import { Password } from '@app/password-lib';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SearchUsersDto } from './dto/search-users.dto';
+import { Users, UsersSelect } from './entity/users.select';
 
 @Injectable()
 export class UsersService {
@@ -19,7 +21,7 @@ export class UsersService {
 
     const hashPassword = await Password.hashPassword(dto.password);
 
-    const user = await this.repository.createUser({
+    return await this.repository.createUser({
       data: {
         hashPassword: hashPassword,
         email: dto.email,
@@ -27,13 +29,25 @@ export class UsersService {
         avatar: dto.avatar,
       },
     });
-
-    return user;
   }
 
-  async getUsers() {
-    const users = await this.repository.getUsers({});
-    return users;
+  async search(searchDto: SearchUsersDto): Promise<Users[]> {
+    const where = this.transformQueryToWhere(searchDto);
+    return await this.repository.getUsers({
+      where,
+      select: UsersSelect,
+    });
+  }
+
+  transformQueryToWhere(searchDto: SearchUsersDto) {
+    return {
+      OR: [
+        { id: searchDto.id },
+        { email: searchDto.email! },
+        { username: searchDto.username! },
+        { role: searchDto.role! },
+      ],
+    };
   }
 
   async updateUser(id: number, dto: UpdateUserDto) {
@@ -41,15 +55,12 @@ export class UsersService {
     if (!existsUser || existsUser.length === 0) {
       throw new AppException('E001');
     }
-    console.log(dto);
 
     const updatedUser = await this.repository.updateUser({
       where: {
         id,
       },
-      data: {
-        ...dto,
-      },
+      data: dto,
     });
     if (!updatedUser) {
       throw new AppException('E003');

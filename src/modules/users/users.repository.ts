@@ -18,9 +18,17 @@ export class UsersRepository {
     cursor?: Prisma.UserWhereUniqueInput;
     where?: Prisma.UserWhereInput;
     orderBy?: Prisma.UserOrderByWithRelationInput;
+    select?: Prisma.UserSelect;
   }): Promise<User[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.user.findMany({ skip, take, cursor, where, orderBy });
+    const { skip, take, cursor, where, orderBy, select } = params;
+    return this.prisma.user.findMany({
+      skip,
+      take,
+      cursor,
+      where,
+      orderBy,
+      select,
+    });
   }
 
   async updateUser(params: {
