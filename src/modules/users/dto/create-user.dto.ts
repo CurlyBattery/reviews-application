@@ -5,11 +5,8 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  Matches,
-  MaxLength,
   MinLength,
 } from 'class-validator';
-import { Match } from '@app/decorators';
 
 export class CreateUserDto {
   @IsEmail()
@@ -22,20 +19,8 @@ export class CreateUserDto {
   username: User[`username`];
 
   @IsString()
-  @MinLength(4)
-  @MaxLength(20)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password too weak',
-  })
   @IsNotEmpty()
-  password: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Match('password', {
-    message: 'repeat password does not match',
-  })
-  repeatPassword: string;
+  hashPassword: User[`hashPassword`];
 
   @IsString()
   @IsNotEmpty()

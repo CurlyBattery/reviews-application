@@ -3,7 +3,7 @@ import { CreateUserDto } from './create-user.dto';
 import { IsNumber, IsOptional } from 'class-validator';
 
 export class SearchUsersDto extends PartialType(
-  OmitType(CreateUserDto, ['password', 'repeatPassword', 'avatar']),
+  OmitType(CreateUserDto, ['hashPassword', 'avatar']),
 ) {
   @IsNumber()
   @IsOptional()

@@ -1,8 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AppException } from '@webxsid/nest-exception';
-import { Password } from '@app/password-lib';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SearchUsersDto } from './dto/search-users.dto';
 import { Users, UsersSelect } from './entity/users.select';
@@ -16,14 +20,12 @@ export class UsersService {
       where: { email: dto.email },
     });
     if (existsUser && existsUser.length > 0) {
-      throw new AppException('E002');
+      throw new ConflictException('User already exists');
     }
-
-    const hashPassword = await Password.hashPassword(dto.password);
 
     return await this.repository.createUser({
       data: {
-        hashPassword: hashPassword,
+        hashPassword: dto.hashPassword,
         email: dto.email,
         username: dto.username,
         avatar: dto.avatar,
@@ -50,10 +52,26 @@ export class UsersService {
     };
   }
 
+  public async getUserByEmail(email: string) {
+    const user = await this.repository.getUsers({ where: { email } });
+    if (!user || user.length === 0) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  public async getUserById(id) {
+    const user = await this.repository.getUsers({ where: { id } });
+    if (!user || user.length === 0) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
   async updateUser(id: number, dto: UpdateUserDto) {
     const existsUser = await this.repository.getUsers({ where: { id } });
     if (!existsUser || existsUser.length === 0) {
-      throw new AppException('E001');
+      throw new NotFoundException('User not found');
     }
 
     const updatedUser = await this.repository.updateUser({
@@ -63,7 +81,7 @@ export class UsersService {
       data: dto,
     });
     if (!updatedUser) {
-      throw new AppException('E003');
+      throw new BadRequestException('User failed to update');
     }
     return updatedUser;
   }
@@ -71,7 +89,7 @@ export class UsersService {
   async delete(id: number): Promise<Users> {
     const existsUser = await this.repository.getUsers({ where: { id } });
     if (!existsUser || existsUser.length === 0) {
-      throw new AppException('E001');
+      throw new NotFoundException('User not found');
     }
 
     const deletedUser = await this.repository.deleteUser({
@@ -81,7 +99,7 @@ export class UsersService {
       select: UsersSelect,
     });
     if (!deletedUser) {
-      throw new AppException('E003');
+      throw new BadRequestException('User failed to delete');
     }
     return deletedUser;
   }
