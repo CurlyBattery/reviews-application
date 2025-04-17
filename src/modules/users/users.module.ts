@@ -12,6 +12,7 @@ import { AppExceptionModule } from '@webxsid/nest-exception';
       errors: [
         { code: 'E001', statusCode: 404, message: 'User not found' },
         { code: 'E002', statusCode: 409, message: 'User already exists' },
+        { code: 'E003', statusCode: 400, message: 'User failed to update' },
       ],
     }),
   ],

@@ -3,6 +3,7 @@ import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AppException } from '@webxsid/nest-exception';
 import { Password } from '@app/password-lib';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -35,10 +36,24 @@ export class UsersService {
     return users;
   }
 
-  async updateUser(id: number, dto: any) {
+  async updateUser(id: number, dto: UpdateUserDto) {
     const existsUser = await this.repository.getUsers({ where: { id } });
     if (!existsUser || existsUser.length === 0) {
       throw new AppException('E001');
     }
+    console.log(dto);
+
+    const updatedUser = await this.repository.updateUser({
+      where: {
+        id,
+      },
+      data: {
+        ...dto,
+      },
+    });
+    if (!updatedUser) {
+      throw new AppException('E003');
+    }
+    return updatedUser;
   }
 }
