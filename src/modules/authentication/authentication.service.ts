@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
-import { Password } from '@app/password-lib';
-import { AppException } from '@webxsid/nest-exception';
+import { Scrypt } from '@app/hash';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { config } from 'rxjs';
 
 export interface TokenPayload {
   userId: number;
@@ -19,7 +19,7 @@ export class AuthenticationService {
   ) {}
 
   public async register(registrationData: RegisterDto) {
-    const hashPassword = await Password.hashPassword(registrationData.password);
+    const hashPassword = await Scrypt.hash(registrationData.password, 16);
     try {
       const createdUser = await this.usersService.createUser({
         ...registrationData,
@@ -46,7 +46,7 @@ export class AuthenticationService {
   }
 
   private async verifyPassword(plainTextPassword, hashedPassword) {
-    const isPasswordMatching = await Password.comparePassword(
+    const isPasswordMatching = await Scrypt.compare(
       hashedPassword,
       plainTextPassword,
     );
@@ -55,15 +55,33 @@ export class AuthenticationService {
     }
   }
 
-  public getCookieWithJwtToken(userId: number) {
+  public getJwtAccessToken(userId: number) {
     const payload: TokenPayload = { userId };
-    const token = this.jwtService.sign(payload);
-    return `Authentication=${token}`;
-
-    // return `Authentication=${token}: HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_EXPIRATION_TIME')}`;
+    const maxAge = this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME');
+    return {
+      accessToken: this.jwtService.sign(payload, {
+        secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        expiresIn: `${maxAge / 1000}s`,
+      }),
+      jwtExp: maxAge,
+    };
   }
 
-  public getCookieForLogOut() {
-    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+  public async getJwtRefreshToken(userId: number) {
+    const payload: TokenPayload = { userId };
+    const maxAge = this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME');
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: `${maxAge / 1000}s`,
+    });
+    await this.usersService.setCurrentRefreshToken(refreshToken, userId);
+    return {
+      refreshToken: refreshToken,
+      jwtExp: maxAge,
+    };
+  }
+
+  async removeJwtRefreshToken(userId: number) {
+    await this.usersService.removeRefreshToken(userId);
   }
 }

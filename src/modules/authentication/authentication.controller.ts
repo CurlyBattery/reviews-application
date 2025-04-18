@@ -14,6 +14,7 @@ import { LocalAuthenticationGuard } from './guards/local.guard';
 import RequestWithUser from './requests/user.request';
 import { Response } from 'express';
 import JwtAuthenticationGuard from './guards/jwt.guard';
+import JwtRefreshGuard from './guards/refresh.guard';
 
 @Controller('authentication')
 export class AuthenticationController {
@@ -27,22 +28,85 @@ export class AuthenticationController {
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('log-in')
-  async logIn(@Req() request: RequestWithUser, @Res() response: Response) {
-    const { user } = request;
-    const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
-    response.setHeader('Set-Cookie', cookie);
-    user.hashPassword = undefined;
-    return response.send(user);
+  async logIn(
+    @Req() request: RequestWithUser,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = request.user;
+    const { accessToken, jwtExp: maxAgeAccessToken } =
+      this.authenticationService.getJwtAccessToken(user.id);
+    response.cookie('Authentication', accessToken, {
+      maxAge: maxAgeAccessToken,
+      httpOnly: true,
+      secure: false,
+      path: '/',
+    });
+
+    const { refreshToken, jwtExp: maxAgeRefreshToken } =
+      await this.authenticationService.getJwtRefreshToken(user.id);
+    response.cookie('Refresh', refreshToken, {
+      maxAge: maxAgeRefreshToken,
+      httpOnly: true,
+      secure: false,
+      path: '/',
+    });
+    return {
+      message: 'success',
+    };
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Get('refresh')
+  async refresh(
+    @Req() request: RequestWithUser,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = request.user;
+    const { accessToken, jwtExp: maxAgeAccessToken } =
+      this.authenticationService.getJwtAccessToken(user.id);
+    response.cookie('Authentication', accessToken, {
+      maxAge: maxAgeAccessToken,
+      httpOnly: true,
+      secure: false,
+      path: '/',
+    });
+    const { refreshToken, jwtExp: maxAgeRefreshToken } =
+      await this.authenticationService.getJwtRefreshToken(user.id);
+    response.cookie('Refresh', refreshToken, {
+      maxAge: maxAgeRefreshToken,
+      httpOnly: true,
+      secure: false,
+      path: '/',
+    });
+
+    return {
+      message: 'success',
+    };
   }
 
   @UseGuards(JwtAuthenticationGuard)
   @Post('log-out')
-  async logOut(@Req() request: RequestWithUser, @Res() response: Response) {
-    response.setHeader(
-      'Set-Cookie',
-      this.authenticationService.getCookieForLogOut(),
-    );
-    return response.sendStatus(200);
+  async logOut(
+    @Req() request: RequestWithUser,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const user = request.user;
+    await this.authenticationService.removeJwtRefreshToken(user.id);
+    response.cookie('Authentication', '', {
+      maxAge: 0,
+      httpOnly: true,
+      secure: false,
+      path: '/',
+    });
+    response.cookie('Refresh', '', {
+      maxAge: 0,
+      httpOnly: true,
+      secure: false,
+      path: '/',
+    });
+    return {
+      message: 'success',
+    };
   }
 
   @UseGuards(JwtAuthenticationGuard)

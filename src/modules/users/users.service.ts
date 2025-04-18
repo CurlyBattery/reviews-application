@@ -6,10 +6,10 @@ import {
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AppException } from '@webxsid/nest-exception';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SearchUsersDto } from './dto/search-users.dto';
 import { Users, UsersSelect } from './entity/users.select';
+import { Scrypt } from '@app/hash';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +29,16 @@ export class UsersService {
         email: dto.email,
         username: dto.username,
         avatar: dto.avatar,
+      },
+    });
+  }
+
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
+    const currentHashedRefreshToken = await Scrypt.hash(refreshToken, 10);
+    await this.repository.updateUser({
+      where: { id: userId },
+      data: {
+        currentHashedRefreshToken,
       },
     });
   }
@@ -60,12 +70,38 @@ export class UsersService {
     return user;
   }
 
-  public async getUserById(id) {
+  public async getUserById(id: number) {
     const user = await this.repository.getUsers({ where: { id } });
     if (!user || user.length === 0) {
       throw new NotFoundException('User not found');
     }
     return user;
+  }
+
+  public async getUserIfRefreshTokenMatches(
+    refreshToken: string,
+    userId: number,
+  ) {
+    const [user] = await this.repository.getUsers({ where: { id: userId } });
+
+    const isRefreshTokenMatching = await Scrypt.compare(
+      user.currentHashedRefreshToken,
+      refreshToken,
+    );
+    if (!isRefreshTokenMatching) {
+      throw new BadRequestException('Refresh token not valid');
+    }
+
+    return user;
+  }
+
+  async removeRefreshToken(userId: number) {
+    return this.repository.updateUser({
+      where: { id: userId },
+      data: {
+        currentHashedRefreshToken: null,
+      },
+    });
   }
 
   async updateUser(id: number, dto: UpdateUserDto) {

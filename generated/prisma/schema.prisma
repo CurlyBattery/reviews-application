@@ -9,14 +9,15 @@ datasource db {
 }
 
 model User {
-  id            Int             @id @default(autoincrement())
-  email         String          @unique
-  username      String          @unique
-  hashPassword  String          @map("hash_password")
-  avatar        String
-  role          Role            @default(User)
-  userAndReview UserReview[]
-  CommentReview CommentReview[]
+  id                        Int             @id @default(autoincrement())
+  email                     String          @unique
+  username                  String          @unique
+  hashPassword              String          @map("hash_password")
+  avatar                    String
+  role                      Role            @default(User)
+  currentHashedRefreshToken String?
+  userAndReview             UserReview[]
+  CommentReview             CommentReview[]
 
   @@map("users")
 }
@@ -26,15 +27,15 @@ enum Role {
   User
 }
 
-model Token {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  userAgent String   @map("user_agent")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("tokens")
-}
+// model Token {
+//   id        Int      @id @default(autoincrement())
+//   userId    Int      @map("user_id")
+//   userAgent String   @map("user_agent")
+//   createdAt DateTime @default(now()) @map("created_at")
+//   updatedAt DateTime @updatedAt @map("updated_at")
+//
+//   @@map("tokens")
+// }
 
 model Review {
   id            Int          @id @default(autoincrement())

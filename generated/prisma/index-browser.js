@@ -123,15 +123,8 @@ exports.Prisma.UserScalarFieldEnum = {
   username: 'username',
   hashPassword: 'hashPassword',
   avatar: 'avatar',
-  role: 'role'
-};
-
-exports.Prisma.TokenScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  userAgent: 'userAgent',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  role: 'role',
+  currentHashedRefreshToken: 'currentHashedRefreshToken'
 };
 
 exports.Prisma.ReviewScalarFieldEnum = {
@@ -172,6 +165,11 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
 exports.Role = exports.$Enums.Role = {
   Admin: 'Admin',
   User: 'User'
@@ -185,7 +183,6 @@ exports.Category = exports.$Enums.Category = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Token: 'Token',
   Review: 'Review',
   UserReview: 'UserReview',
   Comment: 'Comment',
