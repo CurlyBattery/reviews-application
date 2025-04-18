@@ -8,19 +8,22 @@ import {
   Body,
   Query,
   Delete,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SearchUsersDto } from './dto/search-users.dto';
+import RoleGuard from '../authentication/guards/role.guard';
+import { Permission, Role } from '../../../generated/prisma';
+import JwtAuthenticationGuard from '../authentication/guards/jwt.guard';
+import PermissionGuard from '../authentication/guards/permissions.guard';
 
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  // @Post()
-  // createUser(@Body() createUserDto: CreateUserDto) {
-  //   return this.usersService.createUser(createUserDto);
-  // }
 
   @Get()
   getUsers(@Query() searchDto: SearchUsersDto) {
@@ -33,6 +36,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(PermissionGuard(Permission.DeleteYourProfile))
   deleteUser(@Param('id') id: number) {
     return this.usersService.delete(id);
   }

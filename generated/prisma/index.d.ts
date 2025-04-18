@@ -51,6 +51,14 @@ export namespace $Enums {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
+export const Permission: {
+  DeleteYourProfile: 'DeleteYourProfile',
+  DeleteAllProfiles: 'DeleteAllProfiles'
+};
+
+export type Permission = (typeof Permission)[keyof typeof Permission]
+
+
 export const Category: {
   Book: 'Book',
   Game: 'Game',
@@ -64,6 +72,10 @@ export type Category = (typeof Category)[keyof typeof Category]
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
+
+export type Permission = $Enums.Permission
+
+export const Permission: typeof $Enums.Permission
 
 export type Category = $Enums.Category
 
@@ -1411,6 +1423,7 @@ export namespace Prisma {
     hashPassword: number
     avatar: number
     role: number
+    permissions: number
     currentHashedRefreshToken: number
     _all: number
   }
@@ -1451,6 +1464,7 @@ export namespace Prisma {
     hashPassword?: true
     avatar?: true
     role?: true
+    permissions?: true
     currentHashedRefreshToken?: true
     _all?: true
   }
@@ -1548,6 +1562,7 @@ export namespace Prisma {
     hashPassword: string
     avatar: string
     role: $Enums.Role
+    permissions: $Enums.Permission[]
     currentHashedRefreshToken: string | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
@@ -1577,6 +1592,7 @@ export namespace Prisma {
     hashPassword?: boolean
     avatar?: boolean
     role?: boolean
+    permissions?: boolean
     currentHashedRefreshToken?: boolean
     userAndReview?: boolean | User$userAndReviewArgs<ExtArgs>
     CommentReview?: boolean | User$CommentReviewArgs<ExtArgs>
@@ -1590,6 +1606,7 @@ export namespace Prisma {
     hashPassword?: boolean
     avatar?: boolean
     role?: boolean
+    permissions?: boolean
     currentHashedRefreshToken?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -1600,6 +1617,7 @@ export namespace Prisma {
     hashPassword?: boolean
     avatar?: boolean
     role?: boolean
+    permissions?: boolean
     currentHashedRefreshToken?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -1610,10 +1628,11 @@ export namespace Prisma {
     hashPassword?: boolean
     avatar?: boolean
     role?: boolean
+    permissions?: boolean
     currentHashedRefreshToken?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "username" | "hashPassword" | "avatar" | "role" | "currentHashedRefreshToken", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "username" | "hashPassword" | "avatar" | "role" | "permissions" | "currentHashedRefreshToken", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userAndReview?: boolean | User$userAndReviewArgs<ExtArgs>
     CommentReview?: boolean | User$CommentReviewArgs<ExtArgs>
@@ -1635,6 +1654,7 @@ export namespace Prisma {
       hashPassword: string
       avatar: string
       role: $Enums.Role
+      permissions: $Enums.Permission[]
       currentHashedRefreshToken: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -2067,6 +2087,7 @@ export namespace Prisma {
     readonly hashPassword: FieldRef<"User", 'String'>
     readonly avatar: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
+    readonly permissions: FieldRef<"User", 'Permission[]'>
     readonly currentHashedRefreshToken: FieldRef<"User", 'String'>
   }
     
@@ -6928,6 +6949,7 @@ export namespace Prisma {
     hashPassword: 'hashPassword',
     avatar: 'avatar',
     role: 'role',
+    permissions: 'permissions',
     currentHashedRefreshToken: 'currentHashedRefreshToken'
   };
 
@@ -7047,6 +7069,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Permission[]'
+   */
+  export type ListEnumPermissionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Permission[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Permission'
+   */
+  export type EnumPermissionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Permission'>
+    
+
+
+  /**
    * Reference to a field of type 'Category'
    */
   export type EnumCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Category'>
@@ -7108,6 +7144,7 @@ export namespace Prisma {
     hashPassword?: StringFilter<"User"> | string
     avatar?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
+    permissions?: EnumPermissionNullableListFilter<"User">
     currentHashedRefreshToken?: StringNullableFilter<"User"> | string | null
     userAndReview?: UserReviewListRelationFilter
     CommentReview?: CommentReviewListRelationFilter
@@ -7120,6 +7157,7 @@ export namespace Prisma {
     hashPassword?: SortOrder
     avatar?: SortOrder
     role?: SortOrder
+    permissions?: SortOrder
     currentHashedRefreshToken?: SortOrderInput | SortOrder
     userAndReview?: UserReviewOrderByRelationAggregateInput
     CommentReview?: CommentReviewOrderByRelationAggregateInput
@@ -7135,6 +7173,7 @@ export namespace Prisma {
     hashPassword?: StringFilter<"User"> | string
     avatar?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
+    permissions?: EnumPermissionNullableListFilter<"User">
     currentHashedRefreshToken?: StringNullableFilter<"User"> | string | null
     userAndReview?: UserReviewListRelationFilter
     CommentReview?: CommentReviewListRelationFilter
@@ -7147,6 +7186,7 @@ export namespace Prisma {
     hashPassword?: SortOrder
     avatar?: SortOrder
     role?: SortOrder
+    permissions?: SortOrder
     currentHashedRefreshToken?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
@@ -7165,6 +7205,7 @@ export namespace Prisma {
     hashPassword?: StringWithAggregatesFilter<"User"> | string
     avatar?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
+    permissions?: EnumPermissionNullableListFilter<"User">
     currentHashedRefreshToken?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
@@ -7393,6 +7434,7 @@ export namespace Prisma {
     hashPassword: string
     avatar: string
     role?: $Enums.Role
+    permissions?: UserCreatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: string | null
     userAndReview?: UserReviewCreateNestedManyWithoutUserInput
     CommentReview?: CommentReviewCreateNestedManyWithoutUserInput
@@ -7405,6 +7447,7 @@ export namespace Prisma {
     hashPassword: string
     avatar: string
     role?: $Enums.Role
+    permissions?: UserCreatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: string | null
     userAndReview?: UserReviewUncheckedCreateNestedManyWithoutUserInput
     CommentReview?: CommentReviewUncheckedCreateNestedManyWithoutUserInput
@@ -7416,6 +7459,7 @@ export namespace Prisma {
     hashPassword?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    permissions?: UserUpdatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userAndReview?: UserReviewUpdateManyWithoutUserNestedInput
     CommentReview?: CommentReviewUpdateManyWithoutUserNestedInput
@@ -7428,6 +7472,7 @@ export namespace Prisma {
     hashPassword?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    permissions?: UserUpdatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userAndReview?: UserReviewUncheckedUpdateManyWithoutUserNestedInput
     CommentReview?: CommentReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -7440,6 +7485,7 @@ export namespace Prisma {
     hashPassword: string
     avatar: string
     role?: $Enums.Role
+    permissions?: UserCreatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: string | null
   }
 
@@ -7449,6 +7495,7 @@ export namespace Prisma {
     hashPassword?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    permissions?: UserUpdatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -7459,6 +7506,7 @@ export namespace Prisma {
     hashPassword?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    permissions?: UserUpdatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -7692,6 +7740,14 @@ export namespace Prisma {
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
+  export type EnumPermissionNullableListFilter<$PrismaModel = never> = {
+    equals?: $Enums.Permission[] | ListEnumPermissionFieldRefInput<$PrismaModel> | null
+    has?: $Enums.Permission | EnumPermissionFieldRefInput<$PrismaModel> | null
+    hasEvery?: $Enums.Permission[] | ListEnumPermissionFieldRefInput<$PrismaModel>
+    hasSome?: $Enums.Permission[] | ListEnumPermissionFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -7739,6 +7795,7 @@ export namespace Prisma {
     hashPassword?: SortOrder
     avatar?: SortOrder
     role?: SortOrder
+    permissions?: SortOrder
     currentHashedRefreshToken?: SortOrder
   }
 
@@ -8029,6 +8086,10 @@ export namespace Prisma {
     commentId?: SortOrder
   }
 
+  export type UserCreatepermissionsInput = {
+    set: $Enums.Permission[]
+  }
+
   export type UserReviewCreateNestedManyWithoutUserInput = {
     create?: XOR<UserReviewCreateWithoutUserInput, UserReviewUncheckedCreateWithoutUserInput> | UserReviewCreateWithoutUserInput[] | UserReviewUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserReviewCreateOrConnectWithoutUserInput | UserReviewCreateOrConnectWithoutUserInput[]
@@ -8063,6 +8124,11 @@ export namespace Prisma {
 
   export type EnumRoleFieldUpdateOperationsInput = {
     set?: $Enums.Role
+  }
+
+  export type UserUpdatepermissionsInput = {
+    set?: $Enums.Permission[]
+    push?: $Enums.Permission | $Enums.Permission[]
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -8597,6 +8663,7 @@ export namespace Prisma {
     hashPassword: string
     avatar: string
     role?: $Enums.Role
+    permissions?: UserCreatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: string | null
     CommentReview?: CommentReviewCreateNestedManyWithoutUserInput
   }
@@ -8608,6 +8675,7 @@ export namespace Prisma {
     hashPassword: string
     avatar: string
     role?: $Enums.Role
+    permissions?: UserCreatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: string | null
     CommentReview?: CommentReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -8662,6 +8730,7 @@ export namespace Prisma {
     hashPassword?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    permissions?: UserUpdatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     CommentReview?: CommentReviewUpdateManyWithoutUserNestedInput
   }
@@ -8673,6 +8742,7 @@ export namespace Prisma {
     hashPassword?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    permissions?: UserUpdatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     CommentReview?: CommentReviewUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -8752,6 +8822,7 @@ export namespace Prisma {
     hashPassword: string
     avatar: string
     role?: $Enums.Role
+    permissions?: UserCreatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: string | null
     userAndReview?: UserReviewCreateNestedManyWithoutUserInput
   }
@@ -8763,6 +8834,7 @@ export namespace Prisma {
     hashPassword: string
     avatar: string
     role?: $Enums.Role
+    permissions?: UserCreatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: string | null
     userAndReview?: UserReviewUncheckedCreateNestedManyWithoutUserInput
   }
@@ -8803,6 +8875,7 @@ export namespace Prisma {
     hashPassword?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    permissions?: UserUpdatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userAndReview?: UserReviewUpdateManyWithoutUserNestedInput
   }
@@ -8814,6 +8887,7 @@ export namespace Prisma {
     hashPassword?: StringFieldUpdateOperationsInput | string
     avatar?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    permissions?: UserUpdatepermissionsInput | $Enums.Permission[]
     currentHashedRefreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     userAndReview?: UserReviewUncheckedUpdateManyWithoutUserNestedInput
   }

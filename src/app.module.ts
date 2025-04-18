@@ -1,9 +1,10 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { UsersModule } from './modules/users/users.module';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
+import RoleGuard from './modules/authentication/guards/role.guard';
 
 @Module({
   imports: [

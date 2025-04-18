@@ -20,17 +20,12 @@ export class AuthenticationService {
 
   public async register(registrationData: RegisterDto) {
     const hashPassword = await Scrypt.hash(registrationData.password, 16);
-    try {
-      const createdUser = await this.usersService.createUser({
-        ...registrationData,
-        hashPassword,
-      });
-      createdUser.hashPassword = undefined;
-      return createdUser;
-    } catch (error) {
-      console.error(error);
-      throw new BadRequestException('Something went wrong');
-    }
+    const createdUser = await this.usersService.createUser({
+      ...registrationData,
+      hashPassword,
+    });
+    createdUser.hashPassword = undefined;
+    return createdUser;
   }
 
   public async getAuthenticatedUser(email: string, hashPassword) {

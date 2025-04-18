@@ -29,6 +29,8 @@ export class UsersService {
         email: dto.email,
         username: dto.username,
         avatar: dto.avatar,
+        role: dto.role!,
+        permissions: dto.permissions!,
       },
     });
   }

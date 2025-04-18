@@ -1,4 +1,4 @@
-import { Role, User } from '../../../../generated/prisma';
+import { Permission, Role, User } from '../../../../generated/prisma';
 import {
   IsEmail,
   IsEnum,
@@ -29,4 +29,8 @@ export class CreateUserDto {
   @IsEnum(Role)
   @IsOptional()
   role?: User[`role`];
+
+  @IsEnum(Permission)
+  @IsOptional()
+  permissions?: User[`permissions`];
 }
